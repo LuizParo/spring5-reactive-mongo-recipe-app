@@ -1,6 +1,6 @@
 package guru.springframework.repositories.reactive;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,17 +22,18 @@ public class RecipeReactiveRepositoryIT {
 
     @Before
     public void setUp() {
+        this.recipeReactiveRepository.deleteAll().block();
+    }
+
+    @Test
+    public void testeSave() {
         Recipe recipe = new Recipe();
         recipe.setId(ID);
         recipe.setDescription(DESCRIPTION);
 
-        this.recipeReactiveRepository.save(recipe);
-    }
+        this.recipeReactiveRepository.save(recipe).block();
 
-    @Test
-    public void fetchRecipes() {
-        Recipe recipe = this.recipeReactiveRepository.findById(ID).block();
-        assertEquals(ID, recipe.getId());
-        assertEquals(DESCRIPTION, recipe.getDescription());
+        long count = this.recipeReactiveRepository.count().block();
+        assertEquals(1L, count);
     }
 }
